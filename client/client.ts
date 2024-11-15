@@ -1,5 +1,4 @@
 import * as openPgpKey from './openPgpKey';
-import axios from 'axios';
 
 document.getElementById('login-form')?.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -9,17 +8,18 @@ document.getElementById('login-form')?.addEventListener('submit', async (event) 
 
     const key = await openPgpKey.generateOpenPgpKey(userID, password);
 
-    axios({
-        method: 'post',
-        url: '/authentification/register'
-    })
-    .then(async (response:any) => {
-        const publicKeyArmored = response.data.publicKey;
-        const protectedKey = await openPgpKey.protectOpenPgpKey(key, publicKeyArmored);
-
-        openPgpKey.register(protectedKey);
-    })
-    .catch(error => {
-        console.error(error);
+    const publicKeyArmored = await fetch('/authentification/register', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            publicKey: key.publicKey
+        })
     });
+
+    const publicKeyArmoredText = await publicKeyArmored.text();
+    const protectedKey = await openPgpKey.protectOpenPgpKey(key, publicKeyArmoredText); 
+
+    openPgpKey.register(protectedKey);
 });

@@ -12,35 +12,33 @@ export class OpenPgpKey {
     }
 }
 
-export async function generateOpenPgpKey(userID:string, password:string) :Promise<OpenPgpKey>
-{
-    const { privateKey, publicKey } = await openpgp.generateKey({
-        type: 'ecc',
-        curve: 'curve25519Legacy',
-        userIDs: [{ name: userID }],
-        passphrase: password,
-        format: 'armored'
+export async function generateOpenPgpKey(userID: string, password: string): Promise<OpenPgpKey> {
+    const { privateKeyArmored, publicKeyArmored } = await openpgp.generateKey({
+        curve: 'curve25519',
+        userIds: [{ name: userID }],
+        passphrase: password
     });
 
-    return new OpenPgpKey(userID, publicKey, privateKey);
+    return new OpenPgpKey(userID, publicKeyArmored, privateKeyArmored);
 }
 
-export async function protectString(str:string, publicKey:openpgp.Key)
+export async function protectString(str:string, publicKey:openpgp.key.Key)
 {
+    const { keys: [key] } = await openpgp.key.readArmored(publicKey.armor());
     return openpgp.encrypt({
-        message: await openpgp.createMessage({ text: str }),
-        encryptionKeys: publicKey
+        message: openpgp.message.fromText(str),
+        publicKeys: [key]
     });
 }
 
 export async function protectOpenPgpKey(key:OpenPgpKey, publicKeyArmored:string) :Promise<OpenPgpKey>
 {
-    const publicKey = await openpgp.readKey({ armoredKey: publicKeyArmored });
+    const { keys: [publicKey] } = await openpgp.key.readArmored(publicKeyArmored);
 
     let cipherPublicKey = await protectString(key.publicKey, publicKey);
     let cipherPrivateKey = await protectString(key.privateKey, publicKey);
 
-    return new OpenPgpKey (key.userID, cipherPublicKey as string, key.privateKey = cipherPrivateKey as string);
+    return new OpenPgpKey (key.userID, cipherPublicKey as unknown as string, key.privateKey = cipherPrivateKey as unknown as string);
 }
 
 export function register(OpenPgpKey:OpenPgpKey) 
