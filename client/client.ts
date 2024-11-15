@@ -9,11 +9,17 @@ document.getElementById('login-form')?.addEventListener('submit', async (event) 
 
     const key = await openPgpKey.generateOpenPgpKey(userID, password);
 
-    axios('/authentification/register')
-    .then(async (response) => {
+    axios({
+        method: 'post',
+        url: '/authentification/register'
+    })
+    .then(async (response:any) => {
         const publicKeyArmored = response.data.publicKey;
         const protectedKey = await openPgpKey.protectOpenPgpKey(key, publicKeyArmored);
 
         openPgpKey.register(protectedKey);
+    })
+    .catch(error => {
+        console.error(error);
     });
 });
