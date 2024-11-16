@@ -1,26 +1,28 @@
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey, X25519PublicKey
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF
+from flask import Flask, jsonify
 
-# Generate a private key for use in the exchange.
+# Generate the server private/public key for use in the exchange.
 private_key = X25519PrivateKey.generate()
 public_key = private_key.public_key()
+print(public_key.public_bytes(encoding=serialization.Encoding.PEM, format=serialization.PublicFormat.SubjectPublicKeyInfo))
+print(private_key.private_bytes(encoding=serialization.Encoding.PEM, format=serialization.PrivateFormat.PKCS8, encryption_algorithm=serialization.NoEncryption()))
 
-psw = "password"
+app = Flask(__name__)
 
-# Encrypt the private key with a password
-encrypt_private_key = private_key.private_bytes(
-    encoding=serialization.Encoding.PEM,
-    format=serialization.PrivateFormat.PKCS8,
-    encryption_algorithm=serialization.BestAvailableEncryption(psw.encode())
-)
+@app.route('/authentification/register', methods=['GET'])
+def get_public_key():
+    return jsonify({
+        'public_key': public_key.public_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PublicFormat.SubjectPublicKeyInfo
+        ).decode('utf-8')
+    })
 
-# Generate another private key to simulate the server's private key
-server_private_key = X25519PrivateKey.generate()
-server_public_key = server_private_key.public_key()
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
 
 # Create shared key to encrypt the couple public/private key
-shared_key = private_key.exchange(server_public_key)
-
-
-# Encrypt the couple public/private key with the shared key
+# ??
+shared_key = private_key.exchange(public_key)
