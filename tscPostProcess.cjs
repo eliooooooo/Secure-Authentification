@@ -32,7 +32,7 @@ const outDir = path.join(__dirname, 'dist');
 // Remplacements à effectuer
 const replacements = {
     "import * as openPgpKey from './openPgpKey';": "import * as openPgpKey from './openPgpKey.js';",
-    "import * as openpgp from 'openpgp';": "import * as openpgp from '../node_modules/openpgp/dist/openpgp.js';",
+    "import * as openpgp from 'openpgp';": "import * as openpgp from '../node_modules/openpgp/dist/openpgp.mjs';",
 };
 
 // Traiter le répertoire de sortie
