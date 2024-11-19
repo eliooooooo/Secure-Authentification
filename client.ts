@@ -14,15 +14,10 @@ window.addEventListener('load', async () => {
 
         console.log(key.publicKey);
 
-        const publicKeyArmored = await fetch('http://localhost:5000/authentification/register', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                publicKey: key.publicKey
-            })
-        });
+        const publicKeyArmored = await fetch('http://localhost:5000/authentification/register')
+        .then(res => res);
+
+        console.log('Response received:', publicKeyArmored);
 
         const publicKeyArmoredText = await publicKeyArmored.text();
         console.log('Received public key:', publicKeyArmoredText);

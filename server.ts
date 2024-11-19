@@ -24,9 +24,8 @@ const startServer = async () => {
 
     const { publicKey, privateKey } = await createKeyPair();
 
-    app.post('/authentification/register', (req, res) => {
-
-        console.log(req);
+    app.get('/authentification/register', (req, res) => {
+        res.status(200).json({ publicKey });
     });
 
     app.listen(port, () => {
