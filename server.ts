@@ -1,9 +1,6 @@
 import express from 'express';
 import * as openpgp from 'openpgp';
-
-const app = express();
-const port = 3000;
-
+import cors from 'cors';
 
 const createKeyPair = async () => {
     const {publicKey, privateKey} = await openpgp.generateKey({
@@ -18,10 +15,15 @@ const createKeyPair = async () => {
 };
 
 const startServer = async () => {
+    const app = express();
+    const port = 5000;
+
+    app.use(cors());
+
     const { publicKey, privateKey } = await createKeyPair();
 
-    app.get('/authentification/register', (req, res) => {
-        res.send('Hello, world!');
+    app.post('/authentification/register', (req, res) => {
+        res.send(publicKey);
     });
 
     app.listen(port, () => {
