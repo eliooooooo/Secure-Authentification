@@ -7,7 +7,7 @@ console.log('Post-process en cours...');
 function replaceInFile(filePath, replacements) {
     let content = fs.readFileSync(filePath, 'utf8');
     for (const [searchValue, replaceValue] of Object.entries(replacements)) {
-        console.log(`Remplacement de ${searchValue} par ${replaceValue} dans ${filePath}`);
+        // console.log(`Remplacement de ${searchValue} par ${replaceValue} dans ${filePath}`);
         const escapedSearchValue = searchValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         content = content.replace(new RegExp(escapedSearchValue, 'g'), replaceValue);
     }
