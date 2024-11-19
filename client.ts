@@ -12,6 +12,8 @@ window.addEventListener('load', async () => {
 
         const key = await openPgpKey.generateOpenPgpKey(userID, password);
 
+        console.log(key.publicKey);
+
         const publicKeyArmored = await fetch('http://localhost:5000/authentification/register', {
             method: 'POST',
             headers: {

@@ -19,11 +19,14 @@ const startServer = async () => {
     const port = 5000;
 
     app.use(cors());
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
 
     const { publicKey, privateKey } = await createKeyPair();
 
     app.post('/authentification/register', (req, res) => {
-        res.send(publicKey);
+
+        console.log(req);
     });
 
     app.listen(port, () => {

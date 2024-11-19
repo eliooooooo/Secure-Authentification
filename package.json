@@ -1,7 +1,8 @@
 {
   "type": "module",
   "scripts": {
-    "build": "tsc && node ./tscPostProcess.cjs"
+    "build": "tsc && node ./tscPostProcess.cjs",
+    "server": "node ./dist/server.js"
   },
   "dependencies": {
     "@types/axios": "^0.9.36",
